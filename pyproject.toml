@@ -1,0 +1,32 @@
+[project]
+name = "social-media-agent"
+version = "0.1.0"
+description = "Mechanischer LangGraph-Workflow: news.html lesen, neue Artikel erkennen und Social-Media-Entwürfe als Markdown speichern."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "langgraph>=0.2",
+    "langchain-openai>=0.2",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+social-media-agent = "social_media_agent.cli:main"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
