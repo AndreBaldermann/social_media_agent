@@ -32,4 +32,5 @@ def _slugify(value: str) -> str:
 
 
 def _plain_single_line(value: str) -> str:
-    return " ".join(value.replace("\r", " ").replace("\n", " ").split())
+    #return " ".join(value.replace("\r", " ").replace("\n", " ").split())
+    return value

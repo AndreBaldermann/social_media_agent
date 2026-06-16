@@ -91,6 +91,7 @@ def build_snapshot(repo_url: str, clone_dir: Path, *, max_files: int = 80) -> Re
         content = _read_text(path)
         if content:
             selected_files.append((str(path.relative_to(clone_dir)), content[:12_000]))
+            
     return RepositorySnapshot(
         repo_url=repo_url,
         clone_dir=clone_dir,

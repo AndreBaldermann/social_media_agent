@@ -71,72 +71,94 @@ def _render_repository_context(snapshot: RepositorySnapshot) -> str:
 
 def _html_prompt(repo_context: str) -> str:
     return f"""
-Du bist ein technischer Repository-Analyst und arbeitest ausschließlich lokal.
-Analysiere das folgende GitHub-Repository anhand des bereitgestellten Snapshots.
+You are a technical repository analyst and work exclusively with local information.
 
-Aufgabe 1: Erzeuge eine vollständige HTML-Datei.
-Regeln:
-- Antworte ausschließlich mit HTML-Code, ohne Markdown-Codefence.
-- Schreibe auf Deutsch.
-- Beschreibe technisch detailliert, was das Repository macht.
-- Erkläre Architektur, zentrale Module, Datenflüsse, APIs/CLIs und Tests, sofern erkennbar.
-- Gehe konkret darauf ein, welche Aspekte besonders business-ready sind.
-- Nenne die 3 größten Verbesserungen als priorisierte Liste.
-- Wenn Informationen nicht im Snapshot enthalten sind, markiere sie als nicht erkennbar.
+Analyze the following GitHub repository based solely on the provided snapshot.
 
-Repository-Snapshot:
+Task 1: Generate a complete HTML document.
+
+Rules:
+- Respond exclusively with HTML code, without any Markdown code fences.
+- Write in English.
+- Provide a technically detailed description of what the repository does.
+- Explain the architecture, core modules, data flows, APIs/CLIs, and tests, if identifiable.
+- Specifically address which aspects are particularly business-ready.
+- List the 3 most important improvements as a prioritized list.
+- If information is not contained in the snapshot, explicitly mark it as "nicht erkennbar" (not identifiable).
+
+Repository Snapshot:
 {repo_context}
 """.strip()
 
 
 def _linkedin_prompt(html_report: str) -> str:
     return f"""
-Du bekommst einen technischen HTML-Report über ein Repository.
-Schreibe daraus einen LinkedIn-Artikel auf Deutsch.
-Regeln:
-- Plain text, kein Markdown, kein HTML.
-- Keine Zeilenumbrüche; alles in einer einzigen Zeile.
-- Nutze passende Emojis.
-- Hebe besonders business-ready Aspekte hervor.
-- Nenne kurz die 3 wichtigsten Verbesserungen.
-- Kein erfundener Inhalt.
+You will receive a technical HTML report about a repository.
 
-HTML-Report:
+Write a professional LinkedIn article in English based on that report.
+
+Rules:
+
+* Plain text only; no Markdown and no HTML.
+* Use short, readable paragraphs separated by blank lines.
+* Start with a strong opening that explains what the repository does and why it matters. 
+* After that, incldue a link to the the github repository.
+* Highlight the most important business-ready aspects.
+* Explain the key technical strengths in a concise and accessible way.
+* Include a short section covering the 3 most important improvements, ordered by priority.
+* End with a brief conclusion or takeaway.
+* Use appropriate emojis, but do not overuse them.
+* Do not invent any information.
+* Only describe facts that can be derived from the HTML report.
+
+HTML Report:
 {html_report}
 """.strip()
 
 
 def _x_prompt(html_report: str) -> str:
     return f"""
-Du bekommst einen technischen HTML-Report über ein Repository.
-Schreibe einen kurzen Tweet oder Thread für x.com auf Deutsch.
-Regeln:
-- Plain text, kein Markdown, kein HTML.
-- Keine Zeilenumbrüche; trenne mehrere Tweets mit " || ".
-- Kurz halten.
-- Fokus: was ist business-ready und welche 1-3 Verbesserungen sind am wichtigsten?
-- Kein erfundener Inhalt.
+You will receive a technical HTML report about a repository.
 
-HTML-Report:
+Write a short tweet or thread for X.com in English based on that report.
+
+Rules:
+
+* Plain text only; no Markdown and no HTML.
+* Start with a strong opening that explains  why it matters. 
+* * After that, incldue a link to the the github repository.
+*  multiple tweets with " || "
+* Keep it concise.
+* Focus on what is business-ready and which 1–3 improvements are most important.
+* Do not invent any information.
+
+HTML Report:
 {html_report}
 """.strip()
 
 
 def _bluesky_prompt(html_report: str) -> str:
     return f"""
-Du bekommst einen technischen HTML-Report über ein Repository.
-Schreibe einen kurzen Bluesky-Post oder Thread auf Deutsch.
-Regeln:
-- Plain text, kein Markdown, kein HTML.
-- Keine Zeilenumbrüche; trenne mehrere Posts mit " || ".
-- Kurz halten.
-- Fokus: business-ready Aspekte und wichtigste Verbesserungen.
-- Kein erfundener Inhalt.
+You will receive a technical HTML report about a repository.
 
-HTML-Report:
+Write a short Bluesky post or thread in English based on that report.
+
+Rules:
+
+* Plain text only; no Markdown and no HTML.
+* Start with a strong opening that explains  why it matters. 
+* * After that, incldue a link to the the github repository.
+* separate multiple posts with " || "
+* Keep it concise.
+* Focus on business-ready aspects and the most important improvements.
+* Do not invent any information.
+
+HTML Report:
 {html_report}
+
 """.strip()
 
 
 def _single_line(value: str) -> str:
-    return " ".join(value.replace("\r", " ").replace("\n", " ").split())
+    #return " ".join(value.replace("\r", " ").replace("\n", " ").split())
+    return value
