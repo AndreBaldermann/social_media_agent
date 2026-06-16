@@ -1,31 +1,32 @@
 # Social Media Agent
 
-Lokaler, mechanischer Workflow für technische Social-Media-Assets aus einem GitHub-Repository.
+A local, mechanical workflow for generating technical social media assets from a GitHub repository.
 
-Der Agent nutzt **kein OpenAI und kein Claude**. Die Generierung läuft lokal über **Ollama** mit `qwen3-coder-next:latest` als Default-Modell und einem Kontextfenster von `128000` Tokens. Ein anderes lokales Ollama-Modell kann per CLI angegeben werden.
+The agent uses **neither OpenAI nor Claude**. All content generation runs locally through **Ollama**, using `qwen3-coder-next:latest` as the default model and a context window of `128000` tokens. Any other local Ollama model can be specified via the CLI.
 
 ## Flow
 
-1. Du übergibst einen Link zu einem GitHub-Repository.
-2. Das Repository wird lokal geklont.
-3. Der Agent baut einen kompakten Repository-Snapshot aus Dateibaum und wichtigen Textdateien.
-4. Ollama erzeugt eine technische HTML-Analyse des Repositories.
-   - technische Details,
-   - Architektur und erkennbare Module,
-   - business-ready Aspekte,
-   - die 3 größten Verbesserungen.
-5. Aus dem HTML-Report erzeugt Ollama einen LinkedIn-Artikel als Plain Text mit Emojis.
-6. Aus dem HTML-Report erzeugt Ollama einen kurzen X/Twitter-Post oder Thread.
-7. Aus dem HTML-Report erzeugt Ollama einen kurzen Bluesky-Post oder Thread.
-8. Alle Dateien werden lokal gespeichert.
+1. Provide a GitHub repository URL.
+2. The repository is cloned locally.
+3. The agent builds a compact repository snapshot from the file tree and important text files.
+4. Ollama generates a technical HTML analysis of the repository, including:
 
-## Voraussetzungen
+   * technical details,
+   * architecture and identifiable modules,
+   * business-ready aspects,
+   * the 3 most important improvements.
+5. Based on the HTML report, Ollama generates a LinkedIn article as plain text with emojis.
+6. Based on the HTML report, Ollama generates a short X/Twitter post or thread.
+7. Based on the HTML report, Ollama generates a short Bluesky post or thread.
+8. All generated files are stored locally.
+
+## Requirements
 
 ```bash
 ollama pull qwen3-coder-next:latest
 ```
 
-Optional für Entwicklung:
+Optional for development:
 
 ```bash
 python -m venv .venv
@@ -33,13 +34,13 @@ source .venv/bin/activate
 pip install -e '.[dev]'
 ```
 
-## Nutzung
+## Usage
 
 ```bash
 social-media-agent https://github.com/org/repo
 ```
 
-Mit Optionen:
+With additional options:
 
 ```bash
 social-media-agent https://github.com/org/repo \
@@ -52,17 +53,17 @@ social-media-agent https://github.com/org/repo \
 
 ## Outputs
 
-Pro Repository entsteht ein Ordner unter `output/` mit:
+For each repository, a directory is created under `output/` containing:
 
-- `repo-report.html` — technische HTML-Analyse,
-- `linkedin.txt` — LinkedIn-Artikel als eine Plain-Text-Zeile,
-- `x.txt` — kurzer X/Twitter-Post oder Thread als eine Plain-Text-Zeile,
-- `bluesky.txt` — kurzer Bluesky-Post oder Thread als eine Plain-Text-Zeile.
+* `repo-report.html` — technical HTML analysis
+* `linkedin.txt` — LinkedIn article in plain text
+* `x.txt` — short X/Twitter post or thread in plain text
+* `bluesky.txt` — short Bluesky post or thread in plain text
 
-## Projektstruktur
+## Project Structure
 
-- `src/social_media_agent/repository.py` — klont das Repo und baut den Snapshot.
-- `src/social_media_agent/generator.py` — ruft lokal die Ollama-API auf und erzeugt die Inhalte.
-- `src/social_media_agent/writer.py` — schreibt HTML- und TXT-Dateien.
-- `src/social_media_agent/workflow.py` — verbindet Clone, Snapshot, Ollama und Output.
-- `src/social_media_agent/cli.py` — CLI für GitHub-Link, Modell, Kontextfenster und Ausgabepfade.
+* `src/social_media_agent/repository.py` — clones the repository and builds the snapshot.
+* `src/social_media_agent/generator.py` — calls the local Ollama API and generates content.
+* `src/social_media_agent/writer.py` — writes HTML and text output files.
+* `src/social_media_agent/workflow.py` — orchestrates cloning, snapshot generation, Ollama processing, and output creation.
+* `src/social_media_agent/cli.py` — command-line interface for repository URLs, model selection, context window configuration, and output paths.
