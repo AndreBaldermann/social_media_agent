@@ -1,19 +1,31 @@
 # Social Media Agent
 
-Mechanischer Python/LangGraph-Workflow für wenige, manuell geprüfte Social-Media-Posts:
+Lokaler, mechanischer Workflow für technische Social-Media-Assets aus einem GitHub-Repository.
 
-1. Script starten
-2. `news.html` lesen
-3. neue Artikel per SQLite erkennen
-4. Inhalt aus HTML-Link/Artikelblock extrahieren
-5. Entwürfe für LinkedIn, Twitter/X und Bluesky generieren
-6. Markdown-Datei speichern
-7. Entwürfe manuell prüfen
-8. optional später manuell posten
+Der Agent nutzt **kein OpenAI und kein Claude**. Die Generierung läuft lokal über **Ollama** mit `qwen3-coder-next:latest` als Default-Modell und einem Kontextfenster von `128000` Tokens. Ein anderes lokales Ollama-Modell kann per CLI angegeben werden.
 
-Der Agent postet bewusst **nicht automatisch**.
+## Flow
 
-## Installation
+1. Du übergibst einen Link zu einem GitHub-Repository.
+2. Das Repository wird lokal geklont.
+3. Der Agent baut einen kompakten Repository-Snapshot aus Dateibaum und wichtigen Textdateien.
+4. Ollama erzeugt eine technische HTML-Analyse des Repositories.
+   - technische Details,
+   - Architektur und erkennbare Module,
+   - business-ready Aspekte,
+   - die 3 größten Verbesserungen.
+5. Aus dem HTML-Report erzeugt Ollama einen LinkedIn-Artikel als Plain Text mit Emojis.
+6. Aus dem HTML-Report erzeugt Ollama einen kurzen X/Twitter-Post oder Thread.
+7. Aus dem HTML-Report erzeugt Ollama einen kurzen Bluesky-Post oder Thread.
+8. Alle Dateien werden lokal gespeichert.
+
+## Voraussetzungen
+
+```bash
+ollama pull qwen3-coder-next:latest
+```
+
+Optional für Entwicklung:
 
 ```bash
 python -m venv .venv
@@ -21,42 +33,36 @@ source .venv/bin/activate
 pip install -e '.[dev]'
 ```
 
-Optional kann eine `.env` aus `.env.example` angelegt werden. Ohne `OPENAI_API_KEY` nutzt der Generator deterministische Template-Entwürfe; mit Key nutzt er `langchain-openai`.
-
-## Schnellstart
+## Nutzung
 
 ```bash
-social-media-agent init-db
-social-media-agent run --news-html examples/news.html --out drafts
+social-media-agent https://github.com/org/repo
 ```
 
-Die Markdown-Entwürfe landen standardmäßig in `drafts/`, die SQLite-Datenbank in `data/social_media_agent.sqlite3`.
-
-## Wichtige Optionen
+Mit Optionen:
 
 ```bash
-social-media-agent run \
-  --news-html news.html \
-  --db data/social_media_agent.sqlite3 \
-  --out drafts \
-  --model gpt-4.1-mini
+social-media-agent https://github.com/org/repo \
+  --workspace-dir workspace/repos \
+  --out output \
+  --model qwen3-coder-next:latest \
+  --ctx 128000 \
+  --force
 ```
 
-- `--dry-run`: erstellt Markdown, merkt Artikel aber nicht als verarbeitet.
-- `--model`: wird nur verwendet, wenn `OPENAI_API_KEY` gesetzt ist.
+## Outputs
+
+Pro Repository entsteht ein Ordner unter `output/` mit:
+
+- `repo-report.html` — technische HTML-Analyse,
+- `linkedin.txt` — LinkedIn-Artikel als eine Plain-Text-Zeile,
+- `x.txt` — kurzer X/Twitter-Post oder Thread als eine Plain-Text-Zeile,
+- `bluesky.txt` — kurzer Bluesky-Post oder Thread als eine Plain-Text-Zeile.
 
 ## Projektstruktur
 
-- `src/social_media_agent/html_reader.py`: liest `news.html` und findet Artikelkandidaten.
-- `src/social_media_agent/storage.py`: speichert verarbeitete Artikel in SQLite.
-- `src/social_media_agent/generator.py`: generiert Social-Media-Entwürfe per LLM oder Fallback.
-- `src/social_media_agent/markdown.py`: schreibt prüfbare Markdown-Dateien.
-- `src/social_media_agent/workflow.py`: verbindet die Schritte als LangGraph-StateGraph.
-- `src/social_media_agent/cli.py`: stellt `init-db` und `run` bereit.
-
-## Nächste sinnvolle Ausbaustufen
-
-- echten Artikelinhalt aus Ziel-URLs laden,
-- Freigabe-Status in Markdown oder SQLite speichern,
-- Qualitätschecks für Zeichenlimits und verbotene Claims ergänzen,
-- erst danach optionale Posting-Adapter für LinkedIn, X/Twitter und Bluesky bauen.
+- `src/social_media_agent/repository.py` — klont das Repo und baut den Snapshot.
+- `src/social_media_agent/generator.py` — ruft lokal die Ollama-API auf und erzeugt die Inhalte.
+- `src/social_media_agent/writer.py` — schreibt HTML- und TXT-Dateien.
+- `src/social_media_agent/workflow.py` — verbindet Clone, Snapshot, Ollama und Output.
+- `src/social_media_agent/cli.py` — CLI für GitHub-Link, Modell, Kontextfenster und Ausgabepfade.

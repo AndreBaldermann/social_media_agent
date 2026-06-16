@@ -1,34 +1,40 @@
-"""Runtime configuration for the workflow."""
+"""Runtime configuration for the local Ollama workflow."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
 
+DEFAULT_MODEL = "qwen3-coder-next:latest"
+DEFAULT_CONTEXT_WINDOW = 128_000
+
 
 @dataclass(frozen=True)
 class Settings:
-    """Paths and model settings used by the command line app."""
+    """CLI settings for one repository analysis run."""
 
-    news_html: Path = Path("news.html")
-    database_path: Path = Path("data/social_media_agent.sqlite3")
-    output_dir: Path = Path("drafts")
-    model: str = "gpt-4.1-mini"
-    dry_run: bool = False
+    repo_url: str
+    workspace_dir: Path = Path("workspace/repos")
+    output_dir: Path = Path("output")
+    model: str = DEFAULT_MODEL
+    context_window: int = DEFAULT_CONTEXT_WINDOW
+    force: bool = False
 
     @classmethod
     def from_args(
         cls,
-        news_html: str,
-        database_path: str,
+        repo_url: str,
+        workspace_dir: str,
         output_dir: str,
         model: str,
-        dry_run: bool,
+        context_window: int,
+        force: bool,
     ) -> Settings:
         return cls(
-            news_html=Path(news_html),
-            database_path=Path(database_path),
+            repo_url=repo_url,
+            workspace_dir=Path(workspace_dir),
             output_dir=Path(output_dir),
             model=model,
-            dry_run=dry_run,
+            context_window=context_window,
+            force=force,
         )
