@@ -1,0 +1,27 @@
+[project]
+name = "social-media-agent"
+version = "0.2.0"
+description = "Lokaler Ollama-Workflow: GitHub-Repo klonen, technisch analysieren und Social-Media-Assets speichern."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+social-media-agent = "social_media_agent.cli:main"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
